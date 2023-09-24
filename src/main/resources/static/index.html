@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" type="image/x-icon" href="/assets/img/branding/logo/icon.ico"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css"/>
+    <link rel="stylesheet" href="/assets/styles/layouts/internal-page.css"/>
+    <link rel="stylesheet" href="/assets/styles/fragments/navbars/default-navbar.css"/>
+    <script src="/webjars/bootstrap/5.3.1/js/bootstrap.min.js"></script>
+    <script src="/webjars/popper.js/1.12.9-1/popper.min.js"></script>
+    <script src="/webjars/jquery/3.7.0/jquery.min.js"></script>
+    <script type="module" src="/assets/scripts/main.js"></script>
+    <title>To-Do List</title>
+</head>
+<body>
+<state key="todos_state">
+    <section>
+        <div class="container mt-5">
+            <h1 class="mb-4">To-Do List</h1>
+            <ul id="todos" class="list-group mb-4"></ul>
+            <div class="input-group mb-3">
+                <input id="taskName" type="text" class="form-control" name="task" placeholder="Enter a new task"
+                       required>
+                <button class="btn btn-primary" onclick="addTask()">Add Task</button>
+            </div>
+        </div>
+    </section>
+</state>
+<script th:inline="javascript">
+
+    function onMarkComplete(index) {
+        console.log('Completing task: ', index);
+        var state = window.context.getKey('todos_state');
+        var changedState = state.todos.find(e => e.id == index);
+        changedState.done = !changedState.done;
+        window.socket.send(
+            JSON.stringify(
+                {
+                    type: "STATE_UPDATED",
+                    key: "todos_state",
+                    data: {
+                        todos: [
+                            ...state.todos.filter(e => e.id != index),
+                            changedState
+                        ]
+                    }
+                }
+            )
+        );
+    }
+
+    function deleteTask(index) {
+        console.log('Deleting task: ', index);
+        var state = window.context.getKey('todos_state');
+        var newStateValue = state.todos.filter(e => e.id != index);
+        console.log('State now: ', newStateValue);
+        window.socket.send(
+            JSON.stringify(
+                {
+                    type: "STATE_UPDATED",
+                    key: "todos_state",
+                    data: {
+                        todos: newStateValue
+                    }
+                }
+            )
+        );
+    }
+
+    function addTask() {
+        var name = document.getElementById('taskName').value;
+        window.socket.send(
+            JSON.stringify(
+                {
+                    type: "STATE_UPDATED",
+                    key: "todos_state",
+                    data: {
+                        todos: [
+                            ...window.context.getKey('todos_state')['todos'],
+                            {
+                                id: (Math.random() + 1).toString(36).substring(7),
+                                title: name,
+                                description: 'No description',
+                                done: false
+                            }
+                        ]
+                    }
+                }
+            )
+        );
+    }
+
+    window.addEventListener('STATE_READY::todos_state', e => {
+        var {todos} = e.detail;
+        let html = '';
+        for (let i = 0; i < todos.length; i++) {
+            console.log('Received updated todo: ', todos[i]);
+            var id = todos[i].id;
+            var isDone = todos[i].done;
+            html += `
+            <li class="list-group-item">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="taskCheckbox_${i}" onclick="onMarkComplete('${id}')" ${isDone ? 'checked' : ''}>
+                <label class="form-check-label" for="taskCheckbox_${i}">${todos[i].title}</label>
+                <button class="btn btn-danger btn-sm float-end ms-2" onclick="deleteTask('${id}')">Delete</button>
+              </div>
+            </li>
+           `;
+        }
+        document.getElementById('todos').innerHTML = html;
+    });
+</script>
+</body>
+</html>
