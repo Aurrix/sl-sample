@@ -1,8 +1,8 @@
-package com.aurrix.slsample.todo.states;
+package com.aurrix.slsample.todo.sl.states;
 
 import com.aurrix.slsample.sml.annotations.StateDefinition;
 import com.aurrix.slsample.sml.models.State;
-import com.aurrix.slsample.todo.models.Todo;
+import com.aurrix.slsample.todo.sl.models.Todo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,6 @@ public class TodoStateLink extends State {
                 new Todo(
                         "1",
                         "DEFAULT",
-                        "This is default TODO",
                         false
                 )
         );

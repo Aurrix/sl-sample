@@ -1,9 +1,8 @@
-package com.aurrix.slsample.todo.models;
+package com.aurrix.slsample.todo.sl.models;
 
 public record Todo(
         String id,
         String title,
-        String description,
         boolean done
 ) {
 }

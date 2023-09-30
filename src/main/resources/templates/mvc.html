@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" type="image/x-icon" href="/assets/img/branding/logo/icon.ico"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css"/>
+    <link rel="stylesheet" href="/assets/styles/layouts/internal-page.css"/>
+    <link rel="stylesheet" href="/assets/styles/fragments/navbars/default-navbar.css"/>
+    <script src="/webjars/bootstrap/5.3.1/js/bootstrap.min.js"></script>
+    <script src="/webjars/popper.js/1.12.9-1/popper.min.js"></script>
+    <script src="/webjars/jquery/3.7.0/jquery.min.js"></script>
+    <title>To-Do List</title>
+</head>
+<body>
+<section>
+    <div class="container mt-5">
+        <h1 class="mb-4">To-Do List</h1>
+        <ul id="todos" class="list-group mb-4">
+            <li class="list-group-item" th:each="todo, i : ${todos}">
+                <div class="form-check">
+                    <form th:action="@{/mvc/change-status}" method="POST" class="d-inline">
+                        <input type="hidden" name="id" th:value="${todo.id()}">
+                        <input type="hidden" name="title" th:value="${todo.title()}">
+                        <button class="btn" th:if="${todo.done()}"><i class="bi bi-check-lg"></i></button>
+                        <button class="btn" th:if="${!todo.done()}"><i class="bi bi-app"></i></button>
+                        <label class="form-check-label" th:for="'taskCheckbox_'+${i.index}"
+                               th:text="${todo.title()}"></label>
+                        <input type="hidden" class="form-control" name="done" th:value="${!todo.done()}">
+                    </form>
+                    <form th:action="@{/mvc/delete}" method="POST" class="d-inline">
+                        <input type="hidden" name="id" th:value="${todo.id()}">
+                        <button class="btn btn-danger btn-sm float-end ms-2" type="submit">Delete</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+        <form th:action="@{/mvc/add}" method="POST">
+            <div class="input-group mb-3">
+                <input id="title" type="text" class="form-control" name="title" placeholder="Enter a new task"
+                       required>
+                <input id="done" type="hidden" class="form-control" name="done" value=false>
+                <button class="btn btn-primary" type="submit">Add Task</button>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

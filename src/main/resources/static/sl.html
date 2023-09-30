@@ -32,9 +32,9 @@
 <script th:inline="javascript">
 
     function onMarkComplete(index) {
-        console.log('Completing task: ', index);
+        console.log('Completing task: ', sl);
         var state = window.context.getKey('todos_state');
-        var changedState = state.todos.find(e => e.id == index);
+        var changedState = state.todos.find(e => e.id == sl);
         changedState.done = !changedState.done;
         window.socket.send(
             JSON.stringify(
@@ -43,7 +43,7 @@
                     key: "todos_state",
                     data: {
                         todos: [
-                            ...state.todos.filter(e => e.id != index),
+                            ...state.todos.filter(e => e.id != sl),
                             changedState
                         ]
                     }
@@ -53,9 +53,9 @@
     }
 
     function deleteTask(index) {
-        console.log('Deleting task: ', index);
+        console.log('Deleting task: ', sl);
         var state = window.context.getKey('todos_state');
-        var newStateValue = state.todos.filter(e => e.id != index);
+        var newStateValue = state.todos.filter(e => e.id != sl);
         console.log('State now: ', newStateValue);
         window.socket.send(
             JSON.stringify(
