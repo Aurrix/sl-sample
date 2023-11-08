@@ -117,7 +117,7 @@ public class TodoStateLink extends State {
 Depending on library implementation, view layer can also be simplified:
 ```html
 <!--Declare use of state with key -->
-< key="todos_state">
+<state key="todos_state">
 <section>
     <div class="container mt-5">
         <h1 class="mb-4">To-Do List</h1>
@@ -197,6 +197,8 @@ The typical state dance would include following requests:
 }
 ```
 After receiving the states the view renders the complete HTML page it received from template resolver in first place.
+
+
 3. User triggers a change to the state. View layer triggers the state change event:
 
 ```json

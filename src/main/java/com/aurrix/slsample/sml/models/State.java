@@ -12,7 +12,7 @@ public abstract class State {
 
     public void onInit() throws StateValidationException {}
     public void onUpdate() throws StateValidationException {}
-    public void onDestroy() {}
+    public void onDestroy() throws StateValidationException {}
 
     public abstract String getKey();
 }

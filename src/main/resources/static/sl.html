@@ -53,9 +53,9 @@
     }
 
     function deleteTask(index) {
-        console.log('Deleting task: ', sl);
+        console.log('Deleting task: ', index);
         var state = window.context.getKey('todos_state');
-        var newStateValue = state.todos.filter(e => e.id != sl);
+        var newStateValue = state.todos.filter(e => e.id != index);
         console.log('State now: ', newStateValue);
         window.socket.send(
             JSON.stringify(
@@ -83,7 +83,6 @@
                             {
                                 id: (Math.random() + 1).toString(36).substring(7),
                                 title: name,
-                                description: 'No description',
                                 done: false
                             }
                         ]
